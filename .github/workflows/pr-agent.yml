@@ -23,7 +23,7 @@ jobs:
         id: pragent
         if: |
           contains(toJSON(github.event.pull_request.labels), 'agent-review')
-        uses: Codium-ai/pr-agent@main
+        uses: docker://codiumai/pr-agent:0.24-github_action
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
