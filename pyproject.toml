@@ -1,5 +1,5 @@
 [project]
-name = "umbridge-workshop-2024"
+name = "viz_umbridge"
 version = "0.1.0"
 description = "Repository for the 2024 Umbridge Workshop"
 readme = "README.md"
