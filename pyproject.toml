@@ -5,7 +5,9 @@ description = "Repository for the 2024 Umbridge Workshop"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "jupyter-bokeh>=4.0.5",
     "laser-measles",
+    "panel>=1.5.4",
 ]
 
 [tool.uv.sources]
