@@ -8,6 +8,7 @@ dependencies = [
     "jupyter-bokeh>=4.0.5",
     "laser-measles",
     "panel>=1.5.4",
+    "umbridge>=1.2.4",
 ]
 
 [tool.uv.sources]
