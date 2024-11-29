@@ -1,0 +1,15 @@
+[project]
+name = "umbridge-workshop-2024"
+version = "0.1.0"
+description = "Repository for the 2024 Umbridge Workshop"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "jupyter-bokeh>=4.0.5",
+    "laser-measles",
+    "panel>=1.5.4",
+    "umbridge>=1.2.4",
+]
+
+[tool.uv.sources]
+laser-measles = { git = "https://github.com/krosenfeld-IDM/laser-measles.git", rev = "umbridge-workshop" }
