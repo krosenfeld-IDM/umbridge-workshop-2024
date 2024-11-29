@@ -1,0 +1,7 @@
+[project]
+name = "umbridge-workshop-2024"
+version = "0.1.0"
+description = "Repository for the 2024 Umbridge Workshop"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
