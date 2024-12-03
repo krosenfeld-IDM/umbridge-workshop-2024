@@ -48,6 +48,9 @@ class FixedSizeFloatBuffer:
         else:
             # Buffer is full; return elements starting from next_index to the end, then from start to next_index
             return np.concatenate((self.buffer[self.next_index:], self.buffer[:self.next_index]))
+        
+    def get_index(self):
+        return self.next_index        
 
     def __repr__(self):
         """
@@ -82,6 +85,9 @@ class FixedSizeObjectBuffer:
         else:
             # Buffer is full; return elements starting from next_index to the end, then from start to next_index
             return self.buffer[self.next_index:] + self.buffer[:self.next_index]
+        
+    def get_index(self):
+        return self.next_index
 
     def __repr__(self):
         return f"{self.get_values()}"
