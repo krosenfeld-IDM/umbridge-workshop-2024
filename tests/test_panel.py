@@ -12,7 +12,7 @@ def app():
 def test_constructor(app):
     """Tests default values of App"""
     # Then
-    assert app.run == False
+    assert app.run == False # noqa: E712
     assert app.status == "No runs yet"
     assert app.runs == 0
 

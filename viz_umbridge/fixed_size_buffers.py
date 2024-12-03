@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 __all__ = ["FixedSizeObjectBuffer", "FixedSizeFloatBuffer"]
 
