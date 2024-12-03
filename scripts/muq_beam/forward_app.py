@@ -121,8 +121,6 @@ def step():
     Q_source.data["Q2_hist"] = Q2_buffer.hist
     Q_source.data["Q2_hist_bins"] = Q2_buffer.hist_bin_centers
 
-    print(np.sum(beam_source.data["Q1_buffer"] == 0), Q1_buffer.buffer)
-
 
 # create streaming function for updating the plots
 def stream():
@@ -199,6 +197,7 @@ Q1_plot = plotting.figure(
     title = "Q1",
     width = 300,
     height = 400,
+    x_range = [0, 1200]
 )
 Q1_plot.step(x="Q1_hist_bins", y="Q1_hist", line_color='blue', mode="center", line_width=2, source=Q_source)
 
@@ -207,6 +206,7 @@ Q2_plot = plotting.figure(
     title = "Q2",
     width = 300,
     height = 400,
+    x_range = [0, 1200]
 )
 Q2_plot.step(x="Q2_hist_bins", y="Q2_hist", line_color='blue', mode="center", line_width=2, source=Q_source)
 
