@@ -1,3 +1,9 @@
+"""
+docker run -it -p 4243:4243 linusseelinger/benchmark-muq-beam-propagation:latest
+
+https://github.com/UM-Bridge/benchmarks/tree/main/benchmarks/muq-beam-propagation
+https://um-bridge-benchmarks.readthedocs.io/en/docs/forward-benchmarks/muq-beam-propagation.html
+"""
 # https://github.com/InstituteforDiseaseModeling/laser-cohorts/blob/main/bokeh/england_wales_app.py
 import argparse
 import umbridge
