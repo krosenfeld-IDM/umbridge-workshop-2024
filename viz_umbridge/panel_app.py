@@ -10,9 +10,9 @@ class UmbridgePanelApp:
         self.title = "Umbridge App"
         self.callback_period = None
         self.n = None
-        
+
         self.plots = []
-        self.sliders = []
+        self.sliders = {}
 
     def reset_params(self):
         self.callback_period = 50
@@ -60,7 +60,7 @@ class UmbridgePanelApp:
     def setup_template(self, sliders: list =None):
         sliders = (
             ["### Prior Parameters ###"] 
-            + self.sliders 
+            + [s for s in self.sliders.values()]
             + [
                 pn.layout.Divider(),
                 "### Playback Controls",
@@ -79,11 +79,12 @@ class UmbridgePanelApp:
         )
 
 
-    def reset(self, event):
-        self.params = self.reset_params()
-        self.n = 0
-        if not self.callback.running:
-            self.callback.start()
+    def reset(self,event):
+        self.reset_params()
+        self.slider_speed.value = self.callback_period
+        self.n = 0        
+        if self.callback.running:
+            self.callback.stop()
 
     def serve(self):
         pn.serve(self.template)        
