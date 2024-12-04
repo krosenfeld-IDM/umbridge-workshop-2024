@@ -15,7 +15,7 @@ class UmbridgePanelApp:
         self.sliders = {}
 
     def reset_params(self):
-        self.callback_period = 50
+        self.callback_period = 5
         self.n = 0
 
     def initialize_buffers(self):
@@ -54,8 +54,10 @@ class UmbridgePanelApp:
         pass
 
     def stream(self):
-        self.n += 1
-        self.step()    
+        status = self.step()
+        if status:
+            self.n += 1
+        return status   
 
     def setup_template(self, sliders: list =None):
         sliders = (
