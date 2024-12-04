@@ -98,9 +98,9 @@ class PanelPymcApp(vu.UmbridgePanelApp):
                     'callback': self.sampler_callback
                 }
                 if self.start is None:
-                    trace = pm.sample(tune=0, draws=50, **kwargs)
+                    trace = pm.sample(tune=0, draws=5, **kwargs)
                 else:
-                    trace = pm.sample(tune=0, draws=50, start=self.start, **kwargs)
+                    trace = pm.sample(tune=0, draws=5, start=self.start, **kwargs)
 
                 self.start = trace.point(-1)
 
