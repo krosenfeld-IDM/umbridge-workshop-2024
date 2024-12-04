@@ -3,14 +3,18 @@ https://github.com/UM-Bridge/benchmarks/blob/main/benchmarks/analytic-funnel/ser
 """
 import umbridge
 import numpy as np
+from pydantic import BaseModel
 
 # "funnel" distribution from Neal, Radford M. 2003. “Slice Sampling.” Annals of Statistics 31 (3): 705–67
 # Implementation inspired by https://github.com/chi-feng/mcmc-demo
 
+class FunnelConfig(BaseModel):
+    m0: float = 0
+    s0: float = 3
+    m1: float = 0
+
 class Funnel(umbridge.Model):
-    m0 = 0
-    s0 = 3
-    m1 = 0
+    config: FunnelConfig = FunnelConfig()
 
     def __init__(self):
         super().__init__("posterior")
@@ -24,9 +28,9 @@ class Funnel(umbridge.Model):
     def __call__(self, parameters, config):
         def f(x, m, s):
             return -0.5 * np.log(2 * np.pi) - np.log(s) - 0.5 * ((x-m)/s)**2
-        m0 = config.get("m0", self.m0)
-        s0 = config.get("s0", self.s0)
-        m1 = config.get("m1", self.m1)
+        m0 = config.get("m0", self.config.m0)
+        s0 = config.get("s0", self.config.s0)
+        m1 = config.get("m1", self.config.m1)
         s1 = np.exp(parameters[0][0] / 2)
         return [[ float(f(parameters[0][0], m0, s0) + f(parameters[0][1], m1, s1)) ]]
 
@@ -47,9 +51,9 @@ class Funnel(umbridge.Model):
             return -(x-m) / (s**2)
         def dfds(x, m, s):
             return ((x-m)**2 - (s**2)) / (s**3)
-        m0 = config.get("m0", self.m0)
-        s0 = config.get("s0", self.s0)
-        m1 = config.get("m1", self.m1)
+        m0 = config.get("m0", self.config.m0)
+        s0 = config.get("s0", self.config.s0)
+        m1 = config.get("m1", self.config.m1)
         s1 = np.exp(parameters[0][0] / 2)
 
         return [float(vec[1] * dfdx(parameters[0][1], m1, s1)

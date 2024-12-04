@@ -20,14 +20,18 @@ class StopSamplingCallback(pm.callbacks.Callback):
 
 class PanelPymcApp(vu.UmbridgePanelApp):
 
-    def __init__(self, url, model_name="posterior"):
-        self.config = {'m0': 0, 's0': 3, 'm1': 0}
-        self.op = UmbridgeOp(args.url, "posterior", config=self.config)
-        self.input_dim = self.op.umbridge_model.get_input_sizes()[0]
+    def __init__(self, url, model_name="posterior", reset_config=None):
 
         super().__init__(url, model_name)
 
+        setattr(self, 'reset_config', reset_config)
+
+        self.config = {}
         self.reset_params()
+
+        self.op = UmbridgeOp(args.url, "posterior", config=self.config)
+        self.input_dim = self.op.umbridge_model.get_input_sizes()[0]
+
         self.initialize_buffers()
         self.initialize_plot_sources()
         self.initialize_widgets()
@@ -38,9 +42,13 @@ class PanelPymcApp(vu.UmbridgePanelApp):
         super().reset_params()
         self.stepping = False
         self.start = None
-        self.config['m0'] = 0
-        self.config['s0'] = 3
-        self.config['m1'] = 0        
+        for k,v in self.reset_config().items():
+            self.config[k] = v
+        # self.config['radius'] = 2.6
+        # self.config['sigma2'] = 0.033
+        # self.config['m0'] = 0
+        # self.config['s0'] = 3
+        # self.config['m1'] = 0        
 
     def reset(self, event):
         super().reset(event)
@@ -92,9 +100,9 @@ class PanelPymcApp(vu.UmbridgePanelApp):
                     'callback': StopSamplingCallback(self)
                 }
                 if self.start is None:
-                    trace = pm.sample(tune=10, draws=50, **kwargs)
+                    trace = pm.sample(tune=0, draws=500, **kwargs)
                 else:
-                    trace = pm.sample(tune=0, draws=50, start=self.start, **kwargs)
+                    trace = pm.sample(tune=0, draws=500, start=self.start, **kwargs)
 
                 self.start = trace.point(-1)
 
@@ -124,8 +132,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Umbridge Panel App.')
     parser.add_argument('--url', type=str, default='http://localhost:4243',
                         help='The URL at which the model is running.')
+    parser.add_argument('--model', type=str, default='donut',
+                        help='The name of the model to be used.')
     args = parser.parse_args()
 
-    app = PanelPymcApp(url=args.url)
+    if args.model == 'donut':
+        def default_config():
+            return {'radius': 2.6, 'sigma2': 0.033}
+    else:
+        def default_config():
+            return {'m0': 0, 's0': 3, 'm1': 0}
+        
+    app = PanelPymcApp(url=args.url, reset_config=default_config)
 
     app.serve()
