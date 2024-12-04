@@ -11,7 +11,6 @@ import argparse
 import umbridge
 import numpy as np
 import matplotlib.pyplot as plt
-import pickle
 import pymc as pm
 from pytensor import tensor as pt
 from pytensor.gradient import verify_grad # noqa: F401
@@ -71,7 +70,7 @@ else:
 plt.figure()
 plt.plot(sol[0], label="Exact Solution", color='k')
 plt.plot(samples.mean(axis=0), label="Posterior Mean", color='C0')
-plt.fill_between(np.arange(len(sol[0])), samples.mean(axis=0) - 2.96*samples.std(axis=0), samples.mean(axis=0) + 2.96*samples.std(axis=0), alpha=0.5, label="Posterior Std", color='C0')
+plt.fill_between(np.arange(len(sol[0])), samples.mean(axis=0) - 2.96*samples.std(axis=0), samples.mean(axis=0) + 2.96*samples.std(axis=0), alpha=0.3, label="Posterior Std", color='C0')
 plt.tight_layout()
 plt.savefig("figure.png")
 
