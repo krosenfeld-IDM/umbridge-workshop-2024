@@ -1,6 +1,5 @@
 """
 https://www.pymc.io/projects/examples/en/stable/howto/sampling_callback.html
-TODO: fix reset
 """
 import traceback
 import argparse
@@ -11,6 +10,13 @@ from bokeh import plotting
 import viz_umbridge as vu
 from umbridge.pymc import UmbridgeOp
 
+class StopSamplingCallback(pm.callbacks.Callback):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, trace, draw, **kwargs):
+        if not self.app.callback.running:
+            raise pm.exceptions.SamplingError("Sampling stopped by user.")
 
 class PanelPymcApp(vu.UmbridgePanelApp):
 
@@ -30,21 +36,27 @@ class PanelPymcApp(vu.UmbridgePanelApp):
 
     def reset_params(self):
         super().reset_params()
-        self.tuned = False
-        self.stepping = 0
+        self.stepping = False
+        self.start = None
         self.config['m0'] = 0
         self.config['s0'] = 3
-        self.config['m1'] = 0
+        self.config['m1'] = 0        
+
+    def reset(self, event):
+        super().reset(event)
+        self.stepping = False
+        self.start = None
+        for k, v in self.sliders.items():
+            v.value = self.config[k]
 
     def initialize_widgets(self):
         super().initialize_widgets()
 
         for key, value in self.config.items():
             slider = pn.widgets.FloatSlider(name=key, start=-10, end=10, value=value)
-            # add attribute to self
             setattr(self, f'on_{key}_change', lambda event, key=key: self.config.update({key: event.new}))
             slider.param.watch(getattr(self, f'on_{key}_change'), 'value')
-            self.sliders.append(slider)
+            self.sliders[f'{key}'] = slider
 
     def initialize_buffers(self, buffer_size=500):
         self.data_buffers = {f"var_{i}": vu.FixedSizeFloatBuffer(buffer_size, placeholder=i) for i in range(self.input_dim)}
@@ -52,7 +64,6 @@ class PanelPymcApp(vu.UmbridgePanelApp):
     def initialize_plot_sources(self):
         self.plot_source = models.ColumnDataSource({f"var_{i}":[] for i in range(self.input_dim)})
 
-    
     def update_plot_sources(self):
         self.plot_source.data.update({
             f"var_{i}": self.data_buffers[f"var_{i}"].buffer
@@ -66,38 +77,48 @@ class PanelPymcApp(vu.UmbridgePanelApp):
         self.plots += [sample_plot]
 
     def step(self):
-        # don't step again until we're done
         if self.stepping:
-            return
-        
+            return False
+
+        self.stepping = True
+
         with pm.Model() as model:
-            self.stepping = 1 # set stepping flag
-
             try:
-                # UM-Bridge models with a single 1D output implementing a PDF
-                # may be used as a PyMC density that in turn may be sampled
-                posterior = pm.DensityDist('posterior',logp=self.op,shape=self.input_dim)
+                posterior = pm.DensityDist('posterior', logp=self.op, shape=self.input_dim)
+                kwargs = {
+                    'step': pm.Metropolis(),
+                    'return_inferencedata': False,
+                    'cores': 1,
+                    'callback': StopSamplingCallback(self)
+                }
+                if self.start is None:
+                    trace = pm.sample(tune=10, draws=50, **kwargs)
+                else:
+                    trace = pm.sample(tune=0, draws=50, start=self.start, **kwargs)
 
-                # map_estimate = pm.find_MAP()
-                # print(f"MAP estimate of posterior is {map_estimate['posterior']}")
-                trace = pm.sample(tune=10, draws=50, cores=1, return_inferencedata=False, step=pm.NUTS())
+                self.start = trace.point(-1)
 
-                # update the data buffers
                 for points in trace.points():
                     for i, point in enumerate(points['posterior']):
                         self.data_buffers[f"var_{i}"].add(point)
 
                 self.update_plot_sources()
 
+            except pm.exceptions.SamplingError:
+                print("Sampling was stopped by the user.")
+
             except Exception as e:
                 traceback.print_exc()
 
-            self.stepping = 0 # reset stepping flag
+            finally:
+                self.stepping = False
+
+        return True
 
     def stream(self):
-        super().stream()
-        self.plots[0].title.text = f"N={self.n}"        
-
+        status = super().stream()
+        if status:
+            self.plots[0].title.text = f"N={self.n}"        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Umbridge Panel App.')
