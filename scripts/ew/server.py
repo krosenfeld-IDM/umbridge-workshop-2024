@@ -4,6 +4,8 @@ from laser_model.england_wales.params import get_parameters
 from laser_model.england_wales.scenario import get_scenario
 from laser_model.mixing import init_gravity_diffusion
 
+# from . import analyze as ana
+
 class ForwardModel(umbridge.Model):
     def __init__(self, name: str ='forward', config: dict = None):
         super().__init__(name)
@@ -27,13 +29,11 @@ class ForwardModel(umbridge.Model):
         return [0]
 
     def get_output_sizes(self, config):
-        return [len(self.model.nodes)]
+        return 2*[len(self.model.nodes)]
     
     def step(self):
         self.model.step(self.tick)
         self.tick += 1
-        if self.tick % 10 == 0:
-            print(self.tick)
     
     def __call__(self, parameters:list=None, config:dict=None):
         if config is not None:
@@ -43,13 +43,16 @@ class ForwardModel(umbridge.Model):
         self.step()
 
         # package results
-        prevalence = self.model.nodes.states[1] / self.model.nodes.states.sum(axis=0) 
-        return [prevalence.tolist()]
+        prevalence = self.model.nodes.states[1] / self.model.nodes.states.sum(axis=0)
+        cases = self.model.nodes.states[1] # number of cases is just infected because of 2 week time step
+        return [prevalence.tolist(), cases.tolist()]
 
     def supports_evaluate(self):
         return True
         
 model = ForwardModel()
+for i in range(100):
+    model.step()
 
 umbridge.serve_models(
     [model], 4243
