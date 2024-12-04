@@ -32,7 +32,7 @@ class App(pn.viewable.Viewer):
         return self._view
 
     def _start_run(self):
-        self.status = f"Running ..."
+        self.status = "Running ..."
         self._time = time.time()
 
     def _stop_run(self):

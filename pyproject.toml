@@ -1,15 +1,18 @@
 [project]
-name = "umbridge-workshop-2024"
+name = "viz_umbridge"
 version = "0.1.0"
 description = "Repository for the 2024 Umbridge Workshop"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "arviz>=0.20.0",
+    "corner>=2.2.3",
+    "emcee>=3.1.6",
     "jupyter-bokeh>=4.0.5",
-    "laser-measles",
     "panel>=1.5.4",
+    "pymc>=5.18.2",
+    "sciris>=3.2.0",
     "umbridge>=1.2.4",
+    "laser-cohorts @ git+https://github.com/krosenfeld-IDM/laser-cohorts.git",
+    "pydantic>=2.10.3",
 ]
-
-[tool.uv.sources]
-laser-measles = { git = "https://github.com/krosenfeld-IDM/laser-measles.git", rev = "umbridge-workshop" }
