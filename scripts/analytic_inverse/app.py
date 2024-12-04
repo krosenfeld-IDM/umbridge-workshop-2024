@@ -80,7 +80,7 @@ class PanelPymcApp(vu.UmbridgePanelApp):
 
                 # map_estimate = pm.find_MAP()
                 # print(f"MAP estimate of posterior is {map_estimate['posterior']}")
-                trace = pm.sample(tune=10, draws=50, cores=1, return_inferencedata=False, step=pm.Metropolis())
+                trace = pm.sample(tune=10, draws=50, cores=1, return_inferencedata=False, step=pm.NUTS())
 
                 # update the data buffers
                 for points in trace.points():
