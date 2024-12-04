@@ -1,10 +1,12 @@
 """
 https://www.pymc.io/projects/examples/en/stable/howto/sampling_callback.html
 """
+
 import traceback
 import argparse
 import pymc as pm
 import panel as pn
+from pytensor import tensor as pt
 from bokeh import models
 from bokeh import plotting
 import viz_umbridge as vu
@@ -31,6 +33,7 @@ class PanelPymcApp(vu.UmbridgePanelApp):
 
         self.op = UmbridgeOp(args.url, "posterior", config=self.config)
         self.input_dim = self.op.umbridge_model.get_input_sizes()[0]
+        self.sampler_callback = StopSamplingCallback(self)
 
         self.initialize_buffers()
         self.initialize_plot_sources()
@@ -44,11 +47,6 @@ class PanelPymcApp(vu.UmbridgePanelApp):
         self.start = None
         for k,v in self.reset_config().items():
             self.config[k] = v
-        # self.config['radius'] = 2.6
-        # self.config['sigma2'] = 0.033
-        # self.config['m0'] = 0
-        # self.config['s0'] = 3
-        # self.config['m1'] = 0        
 
     def reset(self, event):
         super().reset(event)
@@ -97,12 +95,12 @@ class PanelPymcApp(vu.UmbridgePanelApp):
                     'step': pm.Metropolis(),
                     'return_inferencedata': False,
                     'cores': 1,
-                    'callback': StopSamplingCallback(self)
+                    'callback': self.sampler_callback
                 }
                 if self.start is None:
-                    trace = pm.sample(tune=0, draws=500, **kwargs)
+                    trace = pm.sample(tune=0, draws=50, **kwargs)
                 else:
-                    trace = pm.sample(tune=0, draws=500, start=self.start, **kwargs)
+                    trace = pm.sample(tune=0, draws=50, start=self.start, **kwargs)
 
                 self.start = trace.point(-1)
 
@@ -113,6 +111,7 @@ class PanelPymcApp(vu.UmbridgePanelApp):
                 self.update_plot_sources()
 
             except pm.exceptions.SamplingError:
+                traceback.print_exc()
                 print("Sampling was stopped by the user.")
 
             except Exception as e:
@@ -124,9 +123,12 @@ class PanelPymcApp(vu.UmbridgePanelApp):
         return True
 
     def stream(self):
+        if self.stepping:
+            return
         status = super().stream()
         if status:
             self.plots[0].title.text = f"N={self.n}"        
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Umbridge Panel App.')
