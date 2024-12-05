@@ -1,6 +1,6 @@
 [project]
 name = "viz_umbridge"
-version = "1.0.0"
+version = "1.0.1"
 description = "Repository for the 2024 Umbridge Workshop"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -13,7 +13,7 @@ dependencies = [
     "pymc>=5.18.2",
     "sciris>=3.2.0",
     "umbridge>=1.2.4",
-    "laser-cohorts @ git+https://github.com/krosenfeld-IDM/laser-cohorts.git",
+    "laser-cohorts @ git+https://github.com/krosenfeld-IDM/laser-cohorts.git@v2.0.2",
     "pydantic>=2.10.3",
     "pywavelets>=1.8.0",
     "seaborn>=0.13.2",
@@ -21,7 +21,7 @@ dependencies = [
 ]
 
 [tool.bumpversion]
-current_version = "1.0.0"
+current_version = "1.0.1"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
