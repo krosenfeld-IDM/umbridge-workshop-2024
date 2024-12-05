@@ -209,8 +209,6 @@ if __name__ == "__main__":
     print(umbridge.supported_models(args.url))
 
     app = EWApp(args.url)
-    for i in range(26):
-        app.step()
 
     app.serve()
 
