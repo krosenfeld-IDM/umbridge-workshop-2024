@@ -39,7 +39,7 @@ class QFixedSizeBuffer(vu.FixedSizeFloatBuffer):
         self.hist, _ = np.histogram(self.buffer, bins=self.hist_bins)
 
 class UmbridgePanelApp:
-    def __init__(self, url, model_name="forward"):
+    def __init__(self, url,  model_name="forward"):
         self.url = url
         self.model_name = model_name
         self.callback_period = 50
@@ -255,8 +255,8 @@ class UmbridgePanelApp:
         )
 
         self.template = pn.template.MaterialTemplate(
-            site="MUQ Beam Forward Simulation",
-            title="MUQ Beam Forward Simulation",
+            site="UM-Bridge App",
+            title="MUQ Beam",
             header_background=PRIMARY_COLOR,
             sidebar=[sliders],
             main=[pn.Row(self.beam_plot, self.Q1_plot, self.Q2_plot)],
