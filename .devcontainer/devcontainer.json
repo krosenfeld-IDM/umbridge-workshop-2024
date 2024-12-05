@@ -10,6 +10,7 @@
               "ms-toolsai.jupyter",
               "ms-toolsai.jupyter-renderers",
               "charliermarsh.ruff",
+              "ms-azuretools.vscode-docker",
               "github.codespace"]
       }
   },
