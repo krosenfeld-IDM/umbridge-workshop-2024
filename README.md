@@ -13,7 +13,7 @@ Repository for UMBridge 2024 workshop
 ```bash
 uv venv
 source .venv/bin/activate
-
+```
 1. Then install packages
 ```bash
 uv pip install .
