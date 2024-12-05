@@ -43,5 +43,5 @@ post_commit_hooks = []
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
-search = "[myproject]\nversion={current_version}"
-replace = "[myproject]\nversion={new_version}"
+search = "[myproject]\nversion = {current_version}"
+replace = "[myproject]\nversion = {new_version}"
