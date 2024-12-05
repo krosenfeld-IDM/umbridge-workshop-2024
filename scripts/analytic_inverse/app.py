@@ -24,7 +24,7 @@ class PanelPymcApp(vu.UmbridgePanelApp):
 
     def __init__(self, url, model_name="posterior", reset_config=None):
 
-        super().__init__(url, model_name)
+        super().__init__(url, 'Analytic Example', model_name)
 
         setattr(self, 'reset_config', reset_config)
 
@@ -132,7 +132,7 @@ class PanelPymcApp(vu.UmbridgePanelApp):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Umbridge Panel App.')
-    parser.add_argument('--url', type=str, default='http://localhost:4243',
+    parser.add_argument('--url', type=str, default='http://localhost:4244',
                         help='The URL at which the model is running.')
     parser.add_argument('--model', type=str, default='donut',
                         help='The name of the model to be used.')

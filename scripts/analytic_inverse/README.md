@@ -1,10 +1,10 @@
 # README
 
 ## Usage
-Build specific server (e.g., `server_funnel.py`) we pass in the model name (e.g., `funnel`):
+Build specific server (e.g., `server_donut.py`) we pass in the model name (e.g., `donut`):
 ```bash
-docker build --build-arg MODEL=funnel -t analytic-funnel .
-docker run -it -p 4243:4243 analytic-funnel
+docker build --build-arg MODEL=donut -t analytic-donut .
+docker run -it -p 4244:4243 analytic-donut
 ```
 
 ## More info
