@@ -4,10 +4,10 @@ PRIMARY_COLOR = "#780078"  # UM-Bridge purple
 SECONDARY_COLOR = "#F5A91E"  # UM-Bridge yellow
 
 class UmbridgePanelApp:
-    def __init__(self, url, model_name="posterior"):
+    def __init__(self, url, title: str = None, model_name="posterior"):
         self.url = url
         self.model_name = model_name
-        self.title = "Umbridge App"
+        self.title = "Umbridge App" if title is None else title
         self.callback_period = None
         self.n = None
 
@@ -61,7 +61,7 @@ class UmbridgePanelApp:
 
     def setup_template(self, sliders: list =None):
         sliders = (
-            ["### Prior Parameters ###"] 
+            ["### Parameters ###"] 
             + [s for s in self.sliders.values()]
             + [
                 pn.layout.Divider(),
@@ -73,7 +73,7 @@ class UmbridgePanelApp:
         sliders = pn.Column(*sliders)
 
         self.template = pn.template.MaterialTemplate(
-            site="Umbridge Panel App",
+            site="UM-Bridge App",
             title=self.title,
             header_background=PRIMARY_COLOR,
             sidebar=[sliders],
