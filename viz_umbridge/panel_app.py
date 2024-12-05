@@ -73,7 +73,7 @@ class UmbridgePanelApp:
         sliders = pn.Column(*sliders)
 
         self.template = pn.template.MaterialTemplate(
-            site="Umbridge Panel App",
+            site="UM-Bridge App",
             title=self.title,
             header_background=PRIMARY_COLOR,
             sidebar=[sliders],

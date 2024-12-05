@@ -1,4 +1,5 @@
 import umbridge
+import numpy as np
 from laser_model.england_wales.model import EnglandWalesModel
 from laser_model.england_wales.params import get_parameters
 from laser_model.england_wales.scenario import get_scenario
@@ -13,8 +14,6 @@ class ForwardModel(umbridge.Model):
         self.config = config if config is not None else {}
         self.model = EnglandWalesModel(parameters=self.params, scenario=get_scenario())
         self.model.metrics = []
-        # self.model.run()
-        # self.reset_state()
         self.reset()
 
     def reset(self):
@@ -29,7 +28,7 @@ class ForwardModel(umbridge.Model):
         return [0]
 
     def get_output_sizes(self, config):
-        return 2*[len(self.model.nodes)]
+        return 2*[len(self.model.nodes)] + [1]
     
     def step(self):
         self.model.step(self.tick)
@@ -37,23 +36,29 @@ class ForwardModel(umbridge.Model):
     
     def __call__(self, parameters:list=None, config:dict=None):
         if config is not None:
+            mix_flag = False
             if config.get('reset', False):
                 self.reset_state()
-
+            for p,v in config.items():
+                if p == 'mixing_scale':
+                    v = np.power(10, v)
+                if (p in self.model.params) and (self.model.params[p]) != v:
+                    self.model.params[p] = v
+                    if p in ['distance_exponent', 'mixing_scale']:
+                        mix_flag = True
+            if mix_flag:
+                self.model.params['mixing'] = init_gravity_diffusion(get_scenario(), self.model.params.mixing_scale, self.model.params.distance_exponent)
         self.step()
 
         # package results
         prevalence = self.model.nodes.states[1] / self.model.nodes.states.sum(axis=0)
         cases = self.model.nodes.states[1] # number of cases is just infected because of 2 week time step
-        return [prevalence.tolist(), cases.tolist()]
+        total_prevalence = self.model.nodes.states[1].sum() / self.model.nodes.states.sum()
+        return [prevalence.tolist(), cases.tolist(), [total_prevalence]]
 
     def supports_evaluate(self):
         return True
-        
-model = ForwardModel()
-for i in range(100):
-    model.step()
 
 umbridge.serve_models(
-    [model], 4243
+    [ForwardModel()], 4243
 )
